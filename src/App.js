@@ -4,7 +4,7 @@ import { Provider } from "react-redux";
 import store from "./store";
 import Error404 from "./containers/errors/Error404";
 import Home from "./containers/Home";
-import { Login, Signup, Activate } from "./containers/auth";
+import { Login, Signup, Activate, ResetPassword, ResetPasswordConfirm} from "./containers/auth";
 
 function App() {
   return (
@@ -18,6 +18,16 @@ function App() {
           <Route exac path="/signup" element={<Signup />} />
           <Route exac path="/login" element={<Login />} />
           <Route exac path="/activate/:uid/:token" element={<Activate />} />
+          <Route
+            exac
+            path="/reset_password"
+            element={<ResetPassword />}
+          />
+          <Route
+            exac
+            path="/password/reset/confirm/:uid/:token"
+            element={<ResetPasswordConfirm />}
+          />
         </Routes>
       </Router>
     </Provider>
