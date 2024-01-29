@@ -22,11 +22,11 @@ import {
 } from "@heroicons/react/outline";
 import { ChevronDownIcon } from "@heroicons/react/solid";
 import { connect } from "react-redux";
-import { Navigate } from "react-router-dom";
+import { Navigate, useLocation } from "react-router-dom";
+import { FallingLines } from "react-loader-spinner";
 
 import Alert from "../alert";
 import { signout } from "../../redux/actions/auth";
-import { FallingLines } from "react-loader-spinner";
 
 const solutions = [
   {
@@ -99,14 +99,20 @@ function classNames(...classes) {
 }
 
 const Navbar = ({ isAuthenticated, user, signout }) => {
-  const [redirect, setRedirect] = useState(false)
+  const location = useLocation();
+  const [redirect, setRedirect] = useState(false);
 
   const signoutHandler = () => {
     signout();
     setRedirect(true);
-    
   };
-  if (redirect) return <Navigate to="/" />;
+  if (redirect) {
+    if (location === "/") {
+      return <Navigate to="/" />;
+    } else {
+      window.location.reload();
+    }
+  }
 
   const authLinks = (
     <Menu as="div" className="relative inline-block text-left">
@@ -325,12 +331,12 @@ const Navbar = ({ isAuthenticated, user, signout }) => {
                     </>
                   )}
                 </Popover>
-                <a
-                  href="#"
+                <Link
+                  to="/shop"
                   className="text-base font-medium text-gray-500 hover:text-gray-900"
                 >
-                  Pricing
-                </a>
+                  Store
+                </Link>
                 <a
                   href="#"
                   className="text-base font-medium text-gray-500 hover:text-gray-900"

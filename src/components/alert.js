@@ -5,7 +5,6 @@ import { CheckCircleIcon, XCircleIcon } from "@heroicons/react/solid";
 const Alert = ({ alert }) => {
   const displayAlert = () => {
     if (alert !== null) {
-
       return (
         <div className={`rounded-md bg-${alert.alertType}-100 p-4`}>
           <div className="flex">

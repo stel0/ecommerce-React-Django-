@@ -95,7 +95,9 @@ export const refresh = () => async (dispatch) => {
 };
 
 export const reset_password = (email) => async (dispatch) => {
-  dispatch({ type: SET_AUTH_LOADING });
+  dispatch({
+    type: SET_AUTH_LOADING,
+  });
 
   const config = {
     headers: {
@@ -104,32 +106,40 @@ export const reset_password = (email) => async (dispatch) => {
   };
 
   const body = JSON.stringify({ email });
+
   try {
     const res = await axios.post(
       `${process.env.REACT_APP_API_URL}/auth/users/reset_password/`,
       body,
       config
     );
-    if (res.status === 204 && res.data) {
+
+    if (res.status === 204) {
       dispatch({
         type: RESET_PASSWORD_SUCCESS,
       });
-      dispatch(
-        setAlert("Password reset link has been sent to your email", "green")
-      );
+      dispatch({
+        type: REMOVE_AUTH_LOADING,
+      });
+      dispatch(setAlert("Password reset email sent", "green"));
     } else {
       dispatch({
         type: RESET_PASSWORD_FAIL,
       });
-      dispatch(setAlert("Error sending password reset link", "red"));
+      dispatch({
+        type: REMOVE_AUTH_LOADING,
+      });
+      dispatch(setAlert("Error sending password reset email", "red"));
     }
-  } catch (error) {
+  } catch (err) {
     dispatch({
       type: RESET_PASSWORD_FAIL,
     });
-    dispatch(setAlert("There was an error sending password reset link", "red"));
+    dispatch({
+      type: REMOVE_AUTH_LOADING,
+    });
+    dispatch(setAlert("Error sending password reset email", "red"));
   }
-  dispatch({ type: REMOVE_AUTH_LOADING });
 };
 
 export const reset_password_confirm =
@@ -152,7 +162,7 @@ export const reset_password_confirm =
         new_password,
         re_new_password,
       });
-      console.log(body)
+      console.log(body);
       try {
         const res = await axios.post(
           `${process.env.REACT_APP_API_URL}/auth/users/reset_password_confirm/`,
@@ -171,7 +181,7 @@ export const reset_password_confirm =
           dispatch(setAlert("Error changing password", "red"));
         }
       } catch (error) {
-        console.log(error)
+        console.log(error);
         dispatch({
           type: RESET_PASSWORD_CONFIRM_FAIL,
         });
@@ -333,22 +343,33 @@ export const signin = (email, password) => async (dispatch) => {
       });
       dispatch(load_user());
       dispatch(setAlert("Credenciales correctas", "green"));
-    } else {
-      dispatch({
-        type: LOGIN_FAIL,
-      });
-      dispatch(setAlert("Credenciales incorrectas", "red"));
+      return res.status;
     }
   } catch (error) {
     console.log(error);
     dispatch({
       type: LOGIN_FAIL,
     });
-    dispatch(
-      setAlert("Error al conectar con el servidor, intentalo mas tarde", "red")
-    );
+
+    if (error.response) {
+      if (error.response.status === 401) {
+        dispatch(setAlert("Credenciales incorrectas", "red"));
+      } else {
+        dispatch(setAlert("Error en la autenticación", "red"));
+      }
+      return error.response.status;
+    } else {
+      dispatch(
+        setAlert(
+          "Error al conectar con el servidor, inténtalo más tarde",
+          "red"
+        )
+      );
+      return 500; // Default status for other types of errors
+    }
+  } finally {
+    dispatch({ type: REMOVE_AUTH_LOADING });
   }
-  dispatch({ type: REMOVE_AUTH_LOADING });
 };
 
 export const signout = () => async (dispatch) => {

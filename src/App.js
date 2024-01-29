@@ -3,7 +3,7 @@ import { Provider } from "react-redux";
 
 import store from "./store";
 import Error404 from "./containers/errors/Error404";
-import Home from "./containers/Home";
+import { Home, Shop } from "./containers/index";
 import { Login, Signup, Activate, ResetPassword, ResetPasswordConfirm} from "./containers/auth";
 
 function App() {
@@ -28,6 +28,9 @@ function App() {
             path="/password/reset/confirm/:uid/:token"
             element={<ResetPasswordConfirm />}
           />
+
+          {/* Shop */}
+          <Route exac path="/shop" element={<Shop />} />
         </Routes>
       </Router>
     </Provider>

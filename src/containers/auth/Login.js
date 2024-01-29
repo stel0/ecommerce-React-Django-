@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { connect } from "react-redux";
 import { signin } from "../../redux/actions/auth";
 import { Oval } from "react-loader-spinner";
-import { Link } from "react-router-dom";
+import { Link, Navigate } from "react-router-dom";
 
 const Login = ({ signin, loading }) => {
   useEffect(() => {
@@ -19,11 +19,18 @@ const Login = ({ signin, loading }) => {
   const onChange = (e) =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
 
-  const onSumbit = (e) => {
+  const [activated, setActivated] = useState(false);
+
+  const onSumbit = async (e) => {
     e.preventDefault();
-    signin(email, password);
-    window.scrollTo(0, 0);
+    const res = await signin(email, password);
+    if(res === 200)
+      setActivated(true);
   };
+
+  if(activated && !loading) {
+    return <Navigate to="/" />
+  }
 
   return (
     <Layout>
