@@ -9,8 +9,10 @@ import {
   PlusSmIcon,
   ViewGridIcon,
 } from "@heroicons/react/solid";
+import { Link } from "react-router-dom";
 
 import { get_categories } from "../redux/actions/categories";
+import { get_products, get_filtered_products } from "../redux/actions/products";
 import Layout from "../HOCs/Layout";
 
 const sortOptions = [
@@ -69,7 +71,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Shop = ({ get_categories, categories }) => {
+const Shop = ({
+  get_categories,
+  categories,
+  get_products,
+  products,
+  get_filtered_products,
+  filtered_products,
+}) => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -81,6 +90,7 @@ const Shop = ({ get_categories, categories }) => {
 
   useEffect(() => {
     get_categories();
+    get_products();
   }, []);
 
   const onChange = (e) =>
@@ -434,8 +444,43 @@ const Shop = ({ get_categories, categories }) => {
                 {/* Product grid */}
                 <div className="lg:col-span-3">
                   {/* Replace with your content */}
-                  <div className="border-4 border-dashed border-gray-200 rounded-lg h-96 lg:h-full" />
-                  {/* /End replace */}
+                  <div className="bg-white">
+                    <div className="max-w-2xl mx-auto py-16 px-4 sm:py-24 sm:px-6 lg:max-w-7xl lg:px-8">
+                      <h2 className="text-2xl font-extrabold tracking-tight text-gray-900">
+                        Customers also purchased
+                      </h2>
+
+                      <div className="mt-6 grid grid-cols-1 gap-y-10 gap-x-6 sm:grid-cols-2 lg:grid-cols-4 xl:gap-x-8">
+                        {products && products.map((product) => (
+                          <div key={product.id} className="group relative">
+                            <div className="w-full min-h-80 bg-gray-200 aspect-w-1 aspect-h-1 rounded-md overflow-hidden group-hover:opacity-75 lg:h-80 lg:aspect-none">
+                              <img
+                                src={product.photo}
+                                alt={product.name}
+                                className="w-full h-full object-center object-cover lg:w-full lg:h-full"
+                              />
+                            </div>
+                            <div className="mt-4 flex justify-between">
+                              <div>
+                                <h3 className="text-sm text-gray-700">
+                                  <Link to={`/products/${product.id}`}>
+                                    <span
+                                      aria-hidden="true"
+                                      className="absolute inset-0"
+                                    />
+                                    {product.name}
+                                  </Link>
+                                </h3>
+                              </div>
+                              <p className="text-sm font-medium text-gray-900">
+                                {product.price}
+                              </p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             </section>
@@ -448,8 +493,12 @@ const Shop = ({ get_categories, categories }) => {
 
 const mapStateToProps = (state) => ({
   categories: state.Categories.categories,
+  products: state.Products.products,
+  filtered_products: state.Products.filtered_products,
 });
 
 export default connect(mapStateToProps, {
   get_categories,
+  get_products,
+  get_filtered_products,
 })(Shop);
