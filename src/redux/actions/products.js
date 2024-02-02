@@ -268,7 +268,7 @@ export const get_filtered_products =
         body,
         config
       );
-      if (res === 200) {
+      if (res.status === 200) {
         dispatch({
           type: FILTER_PRODUCTS_SUCCESS,
           payload: res.data,
