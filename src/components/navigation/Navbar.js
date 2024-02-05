@@ -1,4 +1,4 @@
-import { Fragment, useState } from "react";
+import { Fragment, useState, useEffect } from "react";
 import { Popover, Transition, Menu } from "@headlessui/react";
 import { Link } from "react-router-dom";
 import {
@@ -27,6 +27,8 @@ import { FallingLines } from "react-loader-spinner";
 
 import Alert from "../alert";
 import { signout } from "../../redux/actions/auth";
+import SearchBar from "../navigation/SearchBar";
+import { get_categories } from "../../redux/actions/categories";
 
 const solutions = [
   {
@@ -98,9 +100,14 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Navbar = ({ isAuthenticated, user, signout }) => {
+const Navbar = ({ isAuthenticated, user, signout, get_categories,categories }) => {
   const location = useLocation();
   const [redirect, setRedirect] = useState(false);
+
+  /*get the categories*/
+  useEffect(() => {
+    get_categories();
+  },[])
 
   const signoutHandler = () => {
     signout();
@@ -475,6 +482,7 @@ const Navbar = ({ isAuthenticated, user, signout }) => {
                   )}
                 </Popover>
               </Popover.Group>
+              <SearchBar categories={categories} />
               {isAuthenticated ? authLinks : guestLinks}
             </div>
           </div>
@@ -614,6 +622,7 @@ const Navbar = ({ isAuthenticated, user, signout }) => {
 const mapStateToProp = (state) => ({
   isAuthenticated: state.Auth.isAuthenticated,
   user: state.Auth.user,
+  categories: state.Categories.categories,
 });
 
-export default connect(mapStateToProp, { signout })(Navbar);
+export default connect(mapStateToProp, { signout, get_categories })(Navbar);

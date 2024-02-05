@@ -24,6 +24,7 @@ const ProductDetails = ({ get_product, get_related_products, product }) => {
     const product_id = params.product_id;
     get_product(product_id);
     get_related_products(product_id);
+    window.scrollTo(0, 0);
   }, []);
 
   return (

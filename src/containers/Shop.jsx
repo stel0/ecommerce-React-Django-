@@ -649,7 +649,7 @@ const Shop = ({
                   </button>
                 </form>
 
-                {/* Product grid */}
+                {/* Products grid */}
                 <div className="lg:col-span-3">
                   {/* Replace with your content */}
                   {products && showProducts()}
