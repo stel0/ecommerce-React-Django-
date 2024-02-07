@@ -1,5 +1,9 @@
 export { default as Home } from './Home';
 export { default as Shop } from './Shop';
-export * from './auth';
+export { default as Activate } from './auth/Activate';
+export { default as Login } from './auth/Login';
+export { default as ResetPassword } from './auth/ResetPassword';
+export { default as ResetPasswordConfirm } from './auth/ResetPasswordConfirm';
+export { default as Signup } from './auth/Signup';
 export { default as Error404 } from './errors/Error404';
 export { default as ProductDetails } from './pages/ProductDetails';

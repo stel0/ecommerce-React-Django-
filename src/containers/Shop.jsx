@@ -80,8 +80,11 @@ const Shop = ({
   products,
   get_filtered_products,
   filtered_products,
+  search_products,
 }) => {
   const [mobileFiltersOpen, setMobileFiltersOpen] = useState(false);
+
+  const [shopOr, setShopOr] = useState(0);
 
   const [filtered, setFiltered] = useState(false);
   const [formData, setFormData] = useState({
@@ -106,20 +109,28 @@ const Shop = ({
     e.preventDefault();
     get_filtered_products(parseInt(category_id), price_range, sortBy, order);
     setFiltered(true);
+    window.scrollTo(0, 0);
   };
 
   const showProducts = () => {
     let results = [];
     let display = [];
-
     if (
+      !filtered &&
+      search_products &&
+      search_products !== null &&
+      search_products !== undefined
+    ) {
+      search_products.map((product, index) => {
+        display.push(<ProductCart product={product} />);
+      });
+    } else if (
+      filtered &&
       filtered_products &&
       filtered_products !== null &&
-      filtered_products !== undefined &&
-      filtered
+      filtered_products !== undefined
     ) {
       filtered_products.map((product, index) => {
-        console.log("caca");
         display.push(<ProductCart product={product} />);
       });
     } else if (
@@ -129,11 +140,9 @@ const Shop = ({
       products !== undefined
     ) {
       products.map((product, index) => {
-        console.log("first");
         display.push(<ProductCart product={product} />);
       });
     }
-    console.log(display);
     for (let i = 0; i < display.length; i += 3) {
       results.push(
         <div className="grid md:grid-cols-3">
@@ -143,7 +152,6 @@ const Shop = ({
         </div>
       );
     }
-    console.log(results.length);
     return results;
   };
 
@@ -391,8 +399,29 @@ const Shop = ({
 
           <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <section className="relative z-10 flex items-baseline justify-between pt-24 pb-6 border-b border-gray-200">
+              {/* title */}
               <h1 className="text-4xl font-extrabold tracking-tight text-gray-900">
-                New Arrivals
+                {filtered_products ? (
+                  <span>
+                    {`Resultados: ${filtered_products.length} ${
+                      filtered_products.length === 1 ? "producto" : "productos"
+                    }`}
+                  </span>
+                ) : search_products ? (
+                  <span>
+                    {search_products.length > 0
+                      ? `Resultados: ${search_products.length} ${
+                          search_products.length === 1
+                            ? "producto"
+                            : "productos"
+                        }`
+                      : "No hay resultados 😢"}
+                  </span>
+                ) : products ? (
+                  "Tienda"
+                ) : (
+                  "No hay productos 😢"
+                )}
               </h1>
 
               <div className="flex items-center">
@@ -466,7 +495,7 @@ const Shop = ({
 
               <div className="grid grid-cols-1 lg:grid-cols-4 gap-x-8 gap-y-10">
                 {/* Filters */}
-                <form onSubmit={e=>onSubmit(e)} className="hidden lg:block">
+                <form onSubmit={(e) => onSubmit(e)} className="hidden lg:block">
                   <h3 className="sr-only">Categories</h3>
                   <ul
                     role="list"
@@ -667,6 +696,7 @@ const mapStateToProps = (state) => ({
   categories: state.Categories.categories,
   products: state.Products.products,
   filtered_products: state.Products.filtered_products,
+  search_products: state.Products.search_products,
 });
 
 export default connect(mapStateToProps, {

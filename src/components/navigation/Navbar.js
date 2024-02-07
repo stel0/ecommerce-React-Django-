@@ -29,6 +29,7 @@ import Alert from "../alert";
 import { signout } from "../../redux/actions/auth";
 import SearchBar from "../navigation/SearchBar";
 import { get_categories } from "../../redux/actions/categories";
+import { get_search_products } from "../../redux/actions/products";
 
 const solutions = [
   {
@@ -100,19 +101,61 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Navbar = ({ isAuthenticated, user, signout, get_categories,categories }) => {
+const Navbar = ({
+  isAuthenticated,
+  user,
+  signout,
+  get_categories,
+  categories,
+  get_search_products,
+  search_products,
+}) => {
+  /*search box functions*/
+  {
+    /* Set true if the user is searching a product and then render the result */
+  }
+  const [render, setRender] = useState(false);
+  const [formData, setFormData] = useState({
+    category_id: "0",
+    search: "",
+  });
+
+  const { category_id, search } = formData;
+
+  const onChange = (e) =>
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+
+  const onSubmit = (e) => {
+    e.preventDefault();
+    get_search_products(category_id, search);
+    setRender(true);
+    e.target.reset();
+  };
+
+  {
+    /* get the categories for the navbar */
+  }
+  useEffect(() => {
+    get_categories();
+  }, []);
+
   const location = useLocation();
   const [redirect, setRedirect] = useState(false);
 
-  /*get the categories*/
-  useEffect(() => {
-    get_categories();
-  },[])
+  /* user is logged out */
 
   const signoutHandler = () => {
     signout();
     setRedirect(true);
   };
+
+  if (render && location.pathname !== "/shop") {
+    return <Navigate to="/shop" />;
+  }
+
+  {
+    /* if the user is logged out then redirect to home */
+  }
   if (redirect) {
     if (location === "/") {
       return <Navigate to="/" />;
@@ -482,7 +525,11 @@ const Navbar = ({ isAuthenticated, user, signout, get_categories,categories }) =
                   )}
                 </Popover>
               </Popover.Group>
-              <SearchBar categories={categories} />
+              <SearchBar
+                onChange={onChange}
+                onSubmit={onSubmit}
+                categories={categories}
+              />
               {isAuthenticated ? authLinks : guestLinks}
             </div>
           </div>
@@ -623,6 +670,11 @@ const mapStateToProp = (state) => ({
   isAuthenticated: state.Auth.isAuthenticated,
   user: state.Auth.user,
   categories: state.Categories.categories,
+  search_products: state.Products.search_products,
 });
 
-export default connect(mapStateToProp, { signout, get_categories })(Navbar);
+export default connect(mapStateToProp, {
+  signout,
+  get_categories,
+  get_search_products,
+})(Navbar);

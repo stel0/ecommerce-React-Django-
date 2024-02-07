@@ -17,7 +17,7 @@ import {
   SET_AUTH_LOADING,
   REMOVE_AUTH_LOADING,
 } from "./types";
-import axios from "axios"
+import axios from "axios";
 import { setAlert } from "./alert.js";
 
 export const get_products = () => async (dispatch) => {
@@ -99,38 +99,38 @@ export const get_products_by_arrival = () => async (dispatch) => {
 };
 
 export const get_products_by_sold = () => async (dispatch) => {
-    const config = {
-        headers: {
-            Accept: "application/json",
-        },
-    };
-    try {
-        const res = await axios.get(
-            `${process.env.REACT_APP_API_URL}/api/product/get-products?sort_by=sold&order=desc&limit=3`
-        );
-        if (res.status === 200) {
-            dispatch({
-                type: GET_PRODUCTS_BY_SOLD_SUCCESS,
-                payload: res.data,
-            });
-        }
-    } catch (error) {
-        if (error.response) {
-            if (error.response.status === 404) {
-                dispatch({
-                    type: GET_PRODUCTS_BY_SOLD_FAIL,
-                });
-            } else {
-                dispatch({
-                    type: GET_PRODUCTS_BY_SOLD_FAIL,
-                });
-            }
-        } else {
-            dispatch({
-                type: GET_PRODUCTS_BY_SOLD_FAIL,
-            });
-        }
+  const config = {
+    headers: {
+      Accept: "application/json",
+    },
+  };
+  try {
+    const res = await axios.get(
+      `${process.env.REACT_APP_API_URL}/api/product/get-products?sort_by=sold&order=desc&limit=3`
+    );
+    if (res.status === 200) {
+      dispatch({
+        type: GET_PRODUCTS_BY_SOLD_SUCCESS,
+        payload: res.data,
+      });
     }
+  } catch (error) {
+    if (error.response) {
+      if (error.response.status === 404) {
+        dispatch({
+          type: GET_PRODUCTS_BY_SOLD_FAIL,
+        });
+      } else {
+        dispatch({
+          type: GET_PRODUCTS_BY_SOLD_FAIL,
+        });
+      }
+    } else {
+      dispatch({
+        type: GET_PRODUCTS_BY_SOLD_FAIL,
+      });
+    }
+  }
 };
 
 export const get_product = (product_id) => async (dispatch) => {
@@ -170,46 +170,51 @@ export const get_product = (product_id) => async (dispatch) => {
   }
 };
 
-export const search_products = (category_id, search) => async (dispatch) => {
-  const config = {
-    headers: {
-      Accept: "application/json",
-      "Content-Type": "application/json",
-    },
-  };
-  const body = {
-    category_id,
-    search,
-  };
-  try {
-    const res = await axios.post(
-      `${process.env.REACT_APP_API_URL}/api/product/search`,
-      config,
-      body
-    );
-    if (res === 200) {
-      dispatch({
-        type: SEARCH_PRODUCTS_SUCCESS,
-      });
-    }
-  } catch (error) {
-    if (error.response) {
-      if (error.response.status === 404) {
+export const get_search_products =
+  (category_id, search) => async (dispatch) => {
+    const config = {
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    };
+    const body = {
+      category_id,
+      search,
+    };
+
+    try {
+      const res = await axios.post(
+        `${process.env.REACT_APP_API_URL}/api/product/search`,
+        body,
+        config
+      );
+      console.log(res);
+      if (res.status === 200) {
         dispatch({
-          type: SEARCH_PRODUCTS_FAIL,
+          type: SEARCH_PRODUCTS_SUCCESS,
+          payload: res.data,
         });
+      }
+    } catch (error) {
+      console.log(error.response);
+      if (error.response) {
+        if (error.response.status === 404) {
+          dispatch({
+            type: SEARCH_PRODUCTS_FAIL,
+          });
+        } else {
+          dispatch({
+            type: SEARCH_PRODUCTS_FAIL,
+          });
+        }
       } else {
         dispatch({
           type: SEARCH_PRODUCTS_FAIL,
         });
       }
-    } else {
-      dispatch({
-        type: SEARCH_PRODUCTS_FAIL,
-      });
     }
-  }
-};
+  };
 
 export const get_related_products = (product_id) => async (dispatch) => {
   const config = {
@@ -223,7 +228,7 @@ export const get_related_products = (product_id) => async (dispatch) => {
       `${process.env.REACT_APP_API_URL}/api/product/related/${product_id}`,
       config
     );
-    if (res === 200) {
+    if (res.status === 200) {
       dispatch({
         type: RELATED_PRODUCTS_SUCCESS,
         payload: res.data,
