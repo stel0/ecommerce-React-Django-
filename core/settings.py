@@ -33,7 +33,7 @@ PROJECT_APPS = [
     "apps.user",
 ]
 
-ECOMMERCE_APPS = ["apps.category", "apps.product"]
+ECOMMERCE_APPS = ["apps.category", "apps.product","apps.cart"]
 
 THIRD_PARTY_APPS = [
     "corsheaders",

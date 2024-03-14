@@ -178,10 +178,10 @@ export const get_search_products =
         "Content-Type": "application/json",
       },
     };
-    const body = {
+    const body = JSON.stringify({
       category_id,
       search,
-    };
+    });
 
     try {
       const res = await axios.post(
@@ -261,12 +261,12 @@ export const get_filtered_products =
         "Content-Type": "application/json",
       },
     };
-    const body = {
+    const body = JSON.stringify({
       category_id,
       price_range,
       sort_by,
       order,
-    };
+    });
     try {
       const res = await axios.post(
         `${process.env.REACT_APP_API_URL}/api/product/by/search`,
